@@ -1,0 +1,7 @@
+- name: Install required packages (DNF)
+  ansible.builtin.dnf:
+    name:
+      - curl
+      - git
+      - nfs-utils
+    state: present

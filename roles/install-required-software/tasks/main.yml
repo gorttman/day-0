@@ -1,0 +1,11 @@
+- name: Install required software (dynamic include by package manager)
+  include_tasks:
+    file: "install_required_software_{{ ansible_pkg_mgr }}.yml"
+
+- name: Install k3s via curl
+  include_tasks:
+    file: install_required_software_curl.yml
+
+- name: Install minimal ArgoCD
+  include_tasks:
+    file: install_argocd.yml

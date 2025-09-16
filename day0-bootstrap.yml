@@ -1,0 +1,35 @@
+- name: Day-0 Bootstrap Playbook
+  hosts: control
+  become: true
+  tags:
+    - install_day0
+  vars_files:
+    - variables/common/set_environment.yml
+    - variables/play/day0-bootstrap.yml
+    - variables/play/day0-bootstrap-secrets.yml
+
+  pre_tasks:
+    - name: Run shared workspace role
+      include_role:
+        name: shared-workspace
+
+    - name: Ensure Git is installed
+      package:
+        name: git
+        state: present
+
+    - name: Clone bootstrap repo
+      ansible.builtin.git:
+        repo: "{{ bootstrap_repo }}"
+        dest: "{{ bootstrap_repo_path }}"
+        version: main
+        key_file: "{{ git_ssh_private_key }}"
+
+  tasks:
+    - name: Install all required software
+      include_role:
+        name: install-required-software
+
+    - name: Apply ArgoCD bootstrap Application
+      include_role:
+        name: apply-bootstrap

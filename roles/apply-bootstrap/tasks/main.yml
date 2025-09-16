@@ -1,0 +1,20 @@
+- name: Create ArgoCD Git credentials secret
+  kubernetes.core.k8s:
+    state: present
+    namespace: argocd
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: repo-pi-lab-foundation
+        labels:
+          argocd.argoproj.io/secret-type: repository
+      stringData:
+        url: "{{ foundation_repo }}"
+        sshPrivateKey: "{{ lookup('file', git_ssh_private_key) }}"
+
+- name: Apply ArgoCD bootstrap Application
+  kubernetes.core.k8s:
+    state: present
+    namespace: argocd
+    src: "{{ bootstrap_app_path }}"
