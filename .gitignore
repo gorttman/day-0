@@ -1,0 +1,2 @@
+# Ignore everything under any shared_* directory
+**/shared_*/**
