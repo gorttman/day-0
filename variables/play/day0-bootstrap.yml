@@ -10,3 +10,5 @@ kubeconfig: /etc/rancher/k3s/k3s.yaml
 bootstrap_app_path: "{{ staging_dir }}/argo_bootstrap.yml"
 bootstrap_repo: "{{ git_user }}@github.com:{{ git_org }}/pi-lab-day0.git"
 foundation_repo: "{{ git_user }}@github.com:{{ git_org }}/pi-lab-foundation.git"
+argocd_https_port: 30443
+dash_https_port: 30444

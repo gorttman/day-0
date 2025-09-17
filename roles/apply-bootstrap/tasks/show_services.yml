@@ -1,14 +1,32 @@
 ---
-- name: Get Kubernetes Dashboard token
-  ansible.builtin.command: >
-    kubectl -n kubernetes-dashboard create token admin-user
-  register: dashboard_token
-  changed_when: false
+# Read the actual NodePorts so output is always correct
+- name: Read ArgoCD service
+  kubernetes.core.k8s_info:
+    kind: Service
+    namespace: argocd
+    name: argocd-server
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  register: argocd_svc
+
+- name: Read Dashboard service
+  kubernetes.core.k8s_info:
+    kind: Service
+    namespace: kubernetes-dashboard
+    name: kubernetes-dashboard
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  register: dash_svc
+
+- name: Compute NodePort URLs
+  ansible.builtin.set_fact:
+    argocd_https_port: "{{ (argocd_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
+    dash_https_port: "{{ (dash_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
+    argocd_url: "https://{{ ansible_host }}:{{ argocd_https_port }}"
+    dashboard_url: "https://{{ ansible_host }}:{{ dash_https_port }}"
 
 - name: Show ArgoCD and Kubernetes Dashboard credentials
   ansible.builtin.debug:
     msg:
-      - "ArgoCD UI: http://{{ ansible_host }}:30080"
+      - "ArgoCD UI: {{ argocd_url }}"
       - "ArgoCD admin password: {{ argocd_admin_secret.resources[0].data.password | b64decode }}"
-      - "Kubernetes Dashboard UI: https://{{ ansible_host }}:30444"
+      - "Kubernetes Dashboard UI: {{ dashboard_url }}"
       - "Kubernetes Dashboard token: {{ dashboard_token.stdout }}"

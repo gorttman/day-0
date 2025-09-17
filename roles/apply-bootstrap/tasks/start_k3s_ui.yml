@@ -23,7 +23,7 @@
           - name: https
             port: 443
             targetPort: 8080
-            nodePort: 30443
+            nodePort: "{{ argocd_https_port }}"
   become: true
 
 - name: Expose Kubernetes Dashboard service
@@ -43,7 +43,7 @@
         ports:
           - port: 443
             targetPort: 8443
-            nodePort: 30444
+            nodePort: "{{ dash_https_port }}"
 
 - name: Create Dashboard admin user
   kubernetes.core.k8s:

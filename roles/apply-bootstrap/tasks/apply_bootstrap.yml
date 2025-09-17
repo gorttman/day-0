@@ -1,3 +1,21 @@
+---
+- name: Ensure argocd namespace exists
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: argocd
+
+- name: Install ArgoCD core manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: argocd
+    state: present
+    src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
 - name: Create ArgoCD Git credentials secret
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
@@ -35,9 +53,3 @@
     kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: argocd_admin_secret
   become: true
-
-    #- name: Get Kubernetes Dashboard token
-    #  ansible.builtin.command: >
-    #kubectl -n kubernetes-dashboard create token admin-user
-    #  register: dashboard_token
-    #  changed_when: false
