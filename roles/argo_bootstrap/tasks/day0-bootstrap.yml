@@ -1,0 +1,17 @@
+---
+- name: Ensure Git is installed
+  package:
+    name: git
+    state: present
+
+- name: Ensure service directory exists - {{ bootstrap_repo_path }}
+  ansible.builtin.file:
+    path: "{{ bootstrap_repo_path }}"
+    state: directory
+
+- name: Clone bootstrap repo
+  ansible.builtin.git:
+    repo: "{{ bootstrap_repo }}"
+    dest: "{{ bootstrap_repo_path }}"
+    version: main
+    key_file: "{{ git_ssh_private_key }}"

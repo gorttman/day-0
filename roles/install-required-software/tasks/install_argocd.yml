@@ -1,27 +1,42 @@
+---
+- name: Relax permissions on k3s kubeconfig
+  ansible.builtin.file:
+    path: "{{ kubeconfig }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
 - name: Create argocd namespace
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     definition:
       apiVersion: v1
       kind: Namespace
       metadata:
         name: argocd
+  become: true
+  become_user: root
 
 - name: Install minimal ArgoCD manifests
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    namespace: argocd
 
-- name: Wait for ArgoCD server pod to be ready
+- name: Wait for ArgoCD pods to be ready
   kubernetes.core.k8s_info:
-    api_version: v1
     kind: Pod
     namespace: argocd
+    label_selectors:
+      - app.kubernetes.io/name=argocd-server
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: argocd_pods
   until: >
-    argocd_pods.resources
-    | selectattr('status.containerStatuses[0].ready','defined')
-    | selectattr('status.containerStatuses[0].ready')
-    | list | length > 0
+    (argocd_pods.get('resources', []) | length > 0) and
+    ((argocd_pods.get('resources', []) | map(attribute='status.phase') | list) | unique) == ['Running']
   retries: 30
   delay: 10
+  become: true

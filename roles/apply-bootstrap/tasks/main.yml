@@ -1,20 +1,12 @@
-- name: Create ArgoCD Git credentials secret
-  kubernetes.core.k8s:
-    state: present
-    namespace: argocd
-    definition:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: repo-pi-lab-foundation
-        labels:
-          argocd.argoproj.io/secret-type: repository
-      stringData:
-        url: "{{ foundation_repo }}"
-        sshPrivateKey: "{{ lookup('file', git_ssh_private_key) }}"
+---
+- name: Template initial bootstrap app
+  ansible.builtin.include_tasks:
+    file: template_bootstrap.yml
 
-- name: Apply ArgoCD bootstrap Application
-  kubernetes.core.k8s:
-    state: present
-    namespace: argocd
-    src: "{{ bootstrap_app_path }}"
+- name: Apply initial bootstrap app
+  ansible.builtin.include_tasks:
+    file: apply_bootstrap.yml
+
+- name: Start the k3s ui
+  ansible.builtin.include_tasks:
+    file: start_k3s_ui.yml

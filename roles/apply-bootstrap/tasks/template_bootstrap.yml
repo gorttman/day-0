@@ -1,0 +1,5 @@
+---
+- name: Render bootstrap Application manifest
+  ansible.builtin.template:
+    src: bootstrap.yaml.j2
+    dest: "{{ bootstrap_app_path }}"

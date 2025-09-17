@@ -1,0 +1,35 @@
+- name: Create ArgoCD Git credentials secret
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    namespace: argocd
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: repo-pi-lab-foundation
+        labels:
+          argocd.argoproj.io/secret-type: repository
+      stringData:
+        url: "{{ foundation_repo }}"
+        sshPrivateKey: "{{ lookup('file', git_ssh_private_key) }}"
+
+- name: Apply ArgoCD bootstrap Application
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    namespace: argocd
+    src: "{{ bootstrap_app_path }}"
+
+- name: Get ArgoCD initial admin secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: argocd
+    name: argocd-initial-admin-secret
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  register: argocd_admin_secret
+  become: true
+
+- name: Show ArgoCD admin password
+  ansible.builtin.debug:
+    msg: "ArgoCD admin password is {{ argocd_admin_secret.resources[0].data.password | b64decode }}"

@@ -1,29 +1,32 @@
 - name: Day-0 Bootstrap Playbook
-  hosts: control
-  become: true
+  hosts: all
   tags:
     - install_day0
   vars_files:
     - variables/common/set_environment.yml
     - variables/play/day0-bootstrap.yml
-    - variables/play/day0-bootstrap-secrets.yml
 
   pre_tasks:
+    - name: Ensure roles from requirements.yml are installed
+      ansible.builtin.command:
+        cmd: ansible-galaxy install -r roles/requirements.yml -p roles/
+      changed_when: false
+
     - name: Run shared workspace role
-      include_role:
-        name: shared-workspace
+      ansible.builtin.include_role:
+        name: shared_workspace
 
-    - name: Ensure Git is installed
-      package:
-        name: git
-        state: present
+          #    - name: Ensure Git is installed
+          #      package:
+          #    name: git
+          #        state: present
 
-    - name: Clone bootstrap repo
-      ansible.builtin.git:
-        repo: "{{ bootstrap_repo }}"
-        dest: "{{ bootstrap_repo_path }}"
-        version: main
-        key_file: "{{ git_ssh_private_key }}"
+          #    - name: Clone bootstrap repo
+          #      ansible.builtin.git:
+          #   repo: "{{ bootstrap_repo }}"
+          #  dest: "{{ bootstrap_repo_path }}"
+          #   version: main
+          #   key_file: "{{ git_ssh_private_key }}"
 
   tasks:
     - name: Install all required software
