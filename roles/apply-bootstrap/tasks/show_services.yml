@@ -16,17 +16,21 @@
     kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: dash_svc
 
-- name: Compute NodePort URLs
-  ansible.builtin.set_fact:
-    argocd_https_port: "{{ (argocd_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
-    dash_https_port: "{{ (dash_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
-    argocd_url: "https://{{ ansible_host }}:{{ argocd_https_port }}"
-    dashboard_url: "https://{{ ansible_host }}:{{ dash_https_port }}"
+- name: Get ArgoCD initial admin secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    name: argocd-initial-admin-secret
+    namespace: argocd
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  register: argocd_admin_secret
+
+- name: Show ArgoCD admin password
+  ansible.builtin.debug:
 
 - name: Show ArgoCD and Kubernetes Dashboard credentials
   ansible.builtin.debug:
     msg:
-      - "ArgoCD UI: {{ argocd_url }}"
-      - "ArgoCD admin password: {{ argocd_admin_secret.resources[0].data.password | b64decode }}"
-      - "Kubernetes Dashboard UI: {{ dashboard_url }}"
+      - "ArgoCD UI: https://{{ ansible_default_ipv4.address }}:{{ (argocd_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
+      - "{{ argocd_admin_secret.resources[0].data.password | b64decode }}"
+      - "Kubernetes Dashboard UI: https://{{ ansible_default_ipv4.address }}:{{ (dash_svc.resources[0].spec.ports | selectattr('port','equalto',443) | list | first).nodePort }}"
       - "Kubernetes Dashboard token: {{ dashboard_token.stdout }}"
