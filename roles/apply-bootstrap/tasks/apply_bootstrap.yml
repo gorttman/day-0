@@ -21,6 +21,12 @@
     namespace: argocd
     src: "{{ bootstrap_app_path }}"
 
+- name: Apply Kubernetes Dashboard manifest
+  kubernetes.core.k8s:
+    state: present
+    src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    kubeconfig: "{{ kubeconfig }}"
+
 - name: Get ArgoCD initial admin secret
   kubernetes.core.k8s_info:
     kind: Secret
@@ -30,6 +36,8 @@
   register: argocd_admin_secret
   become: true
 
-- name: Show ArgoCD admin password
-  ansible.builtin.debug:
-    msg: "ArgoCD admin password is {{ argocd_admin_secret.resources[0].data.password | b64decode }}"
+    #- name: Get Kubernetes Dashboard token
+    #  ansible.builtin.command: >
+    #kubectl -n kubernetes-dashboard create token admin-user
+    #  register: dashboard_token
+    #  changed_when: false

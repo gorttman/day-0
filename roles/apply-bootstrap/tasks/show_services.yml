@@ -1,0 +1,14 @@
+---
+- name: Get Kubernetes Dashboard token
+  ansible.builtin.command: >
+    kubectl -n kubernetes-dashboard create token admin-user
+  register: dashboard_token
+  changed_when: false
+
+- name: Show ArgoCD and Kubernetes Dashboard credentials
+  ansible.builtin.debug:
+    msg:
+      - "ArgoCD UI: http://{{ ansible_host }}:30080"
+      - "ArgoCD admin password: {{ argocd_admin_secret.resources[0].data.password | b64decode }}"
+      - "Kubernetes Dashboard UI: https://{{ ansible_host }}:30444"
+      - "Kubernetes Dashboard token: {{ dashboard_token.stdout }}"

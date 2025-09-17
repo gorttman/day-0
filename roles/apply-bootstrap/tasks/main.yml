@@ -1,12 +1,13 @@
 ---
-- name: Template initial bootstrap app
-  ansible.builtin.include_tasks:
-    file: template_bootstrap.yml
+- name: Template out  the bootstrap app 
+  include_tasks: template_bootstrap.yml
+    
+- name: Apply ArgoCD bootstrap
+  include_tasks: apply_bootstrap.yml
 
-- name: Apply initial bootstrap app
-  ansible.builtin.include_tasks:
-    file: apply_bootstrap.yml
+- name: Start/Expose Kubernetes Dashboard UI
+  include_tasks: start_k3s_ui.yml 
 
-- name: Start the k3s ui
-  ansible.builtin.include_tasks:
-    file: start_k3s_ui.yml
+- name: Final debug output (Argo + Dashboard creds)
+  include_tasks: show_services.yml
+
