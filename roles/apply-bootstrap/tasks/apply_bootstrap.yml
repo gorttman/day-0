@@ -20,17 +20,19 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
-    namespace: argocd
     definition:
       apiVersion: v1
       kind: Secret
       metadata:
-        name: repo-pi-lab-foundation
+        name: "{{ bootstrap_repos[0].name }}"
+        namespace: argocd
         labels:
           argocd.argoproj.io/secret-type: repository
       stringData:
-        url: "{{ foundation_repo }}"
-        sshPrivateKey: "{{ lookup('file', git_ssh_private_key) }}"
+        type: git
+        url: "{{ bootstrap_repos[0].repo }}"
+        username: "{{ git_user }}"
+        password: "{{ git_token }}"
 
 - name: Apply ArgoCD bootstrap Application
   kubernetes.core.k8s:
@@ -50,6 +52,6 @@
     kind: Secret
     namespace: argocd
     name: argocd-initial-admin-secret
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    kubeconfig: "{{ kubeconfig }}"
   register: argocd_admin_secret
   become: true

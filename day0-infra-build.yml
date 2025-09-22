@@ -16,23 +16,21 @@
       ansible.builtin.include_role:
         name: shared_workspace
 
-          #    - name: Ensure Git is installed
-          #      package:
-          #    name: git
-          #        state: present
-
-          #    - name: Clone bootstrap repo
-          #      ansible.builtin.git:
-          #   repo: "{{ bootstrap_repo }}"
-          #  dest: "{{ bootstrap_repo_path }}"
-          #   version: main
-          #   key_file: "{{ git_ssh_private_key }}"
-
   tasks:
     - name: Install all required software
-      include_role:
+      ansible.builtin.include_role:
         name: install-required-software
 
     - name: Apply ArgoCD bootstrap Application
-      include_role:
+      ansible.builtin.include_role:
         name: apply-bootstrap
+
+
+    - name: Install sealed secrets backup
+      ansible.builtin.include_role:
+        name: install_helper_scripts
+
+    - name: Get and display day 0 credentials
+      ansible.builtin.include_role:
+        name: credentials_out
+

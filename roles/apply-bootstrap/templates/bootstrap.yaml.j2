@@ -1,16 +1,21 @@
+{% for app in bootstrap_repos %}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: day0-bootstrap
+  name: {{ app.name }}
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: {{ bootstrap_repo }}
-    targetRevision: main
-    path: .
+    repoURL: {{ app.repo }}
+    targetRevision: {{ app.rev }}
+    path: {{ app.path }}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
     automated: {}
+    syncOptions:
+      - CreateNamespace=true
+---
+{% endfor %}

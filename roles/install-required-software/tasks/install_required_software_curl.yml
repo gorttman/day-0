@@ -3,3 +3,9 @@
     curl -sfL https://get.k3s.io | sh -
   args:
     creates: /usr/local/bin/k3s
+
+- name: Download kubeseal binary (ARM64 for Raspberry Pi 5)
+  get_url:
+    url: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.27.1/kubeseal-0.27.1-linux-arm64.tar.gz
+    dest: /tmp/kubeseal.tar.gz
+    mode: '0644'

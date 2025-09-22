@@ -2,30 +2,39 @@
 # Read the actual NodePorts so output is always correct
 - name: Read ArgoCD service
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Service
     namespace: argocd
     name: argocd-server
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: argocd_svc
 
 - name: Read Dashboard service
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Service
     namespace: kubernetes-dashboard
     name: kubernetes-dashboard
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: dash_svc
 
 - name: Get ArgoCD initial admin secret
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Secret
     name: argocd-initial-admin-secret
     namespace: argocd
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
   register: argocd_admin_secret
 
-- name: Show ArgoCD admin password
-  ansible.builtin.debug:
+- name: Wait for admin-user service account
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: ServiceAccount
+    name: admin-user
+    namespace: kubernetes-dashboard
+  register: dashboard_sa
+  until: (dashboard_sa.resources | default([])) | length > 0
+  retries: 30
+  delay: 10
 
 - name: Show ArgoCD and Kubernetes Dashboard credentials
   ansible.builtin.debug:

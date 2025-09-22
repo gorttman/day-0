@@ -1,2 +1,2 @@
-# Ignore everything under any shared_* directory
 **/shared_*/**
+credentials/

@@ -1,0 +1,8 @@
+---
+- name: Copy the backup script to local fs
+  ansible.builtin.include_tasks:
+    file: install_backup_sealed_secrets.yml
+
+- name: Coinfigure cron
+  include_tasks:
+    file: install_cron_backup_sealed_secrets.yml

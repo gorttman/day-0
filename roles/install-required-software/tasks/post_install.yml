@@ -1,0 +1,26 @@
+---
+- name: Relax permissions on kubeconfig so Ansible can read it
+  file:
+    path: /etc/rancher/k3s/k3s.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  become_user: root
+
+- name: Extract kubeseal binary
+  unarchive:
+    src: /tmp/kubeseal.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [kubeseal]
+  become: true
+  become_user: root
+
+- name: Ensure kubeseal is executable
+  file:
+    path: /usr/local/bin/kubeseal
+    mode: '0755'
+    state: file
+  become: true
+  become_user: root

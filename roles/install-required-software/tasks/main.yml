@@ -5,3 +5,8 @@
 - name: Install k3s via curl
   include_tasks:
     file: install_required_software_curl.yml
+
+- name: Post installation tasks
+  include_tasks:
+    file: post_install.yml
+
