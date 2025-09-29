@@ -21,4 +21,5 @@ bootstrap_repos:
 
 helper_scripts:
   - seal_secret.sh
-  - backup-sealed-secrets.sh
+# Removed in favor of kubernetes cron job
+#  - backup-sealed-secrets.sh

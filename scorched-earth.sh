@@ -59,7 +59,7 @@ echo "===================================="
 echo "  ⚠️  REBOOT RECOMMENDED"
 echo "===================================="
 for i in {10..1}; do
-  echo "Rebooting in $i seconds... (Ctrl+C to cancel)"
+  echo -ne "Rebooting in $i seconds... (Ctrl+C to cancel)\r"
   sleep 1
 done
 
