@@ -1,0 +1,8 @@
+---
+- name: Check hosts file is accurate
+  ansible.builtin.include_tasks: 
+    file: hosts.yml
+
+- name: Check if cgroups is configured correctly
+  ansible.builtin.include_tasks: 
+    file: cgroups.yml

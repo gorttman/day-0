@@ -1,0 +1,15 @@
+---
+- name: Read current cmdline
+  slurp:
+    src: /boot/firmware/cmdline.txt
+  register: cmdline_content
+  become: true
+
+- name: Ensure cgroup params in cmdline
+  copy:
+    dest: /boot/firmware/cmdline.txt
+    content: "{{ (cmdline_content['content'] | b64decode | regex_replace('\n','') ~ ' cgroup_memory=1 cgroup_enable=memory') | regex_replace(' +',' ') }}"
+  when: "'cgroup_memory=1' not in (cmdline_content['content'] | b64decode) or
+         'cgroup_enable=memory' not in (cmdline_content['content'] | b64decode)"
+  notify: Reboot required
+  become: true

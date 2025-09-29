@@ -17,6 +17,10 @@
         name: shared_workspace
 
   tasks:
+    - name: Check prerequisites
+      ansible.builtin.include_role:
+        name: prep-prerequisites
+
     - name: Install all required software
       ansible.builtin.include_role:
         name: install-required-software
