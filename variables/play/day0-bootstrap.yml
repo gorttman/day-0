@@ -18,6 +18,10 @@ bootstrap_repos:
     repo: "https://github.com/gorttman/day0-bootstrap.git"
     rev: main
     path: apps
+  - name: day1-foundation
+    repo: https://github.com/gorttman/day1-foundation.git
+    rev: main
+    path: apps
 
 helper_scripts:
   - seal_secret.sh
