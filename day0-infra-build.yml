@@ -38,3 +38,27 @@
       ansible.builtin.include_role:
         name: credentials_out
 
+- name: Day-1 manage connected git repos
+  hosts: all
+  tags:
+    - manage_day1
+  vars_files:
+    - variables/common/set_environment.yml
+    - variables/play/day0-bootstrap.yml
+
+  pre_tasks:
+    - name: Ensure roles from requirements.yml are installed
+      ansible.builtin.command:
+        cmd: ansible-galaxy install -r roles/requirements.yml -p roles/
+      changed_when: false
+
+    - name: Run shared workspace role
+      ansible.builtin.include_role:
+        name: shared_workspace
+
+  tasks:
+    - name: Apply ArgoCD bootstrap Application
+      ansible.builtin.include_role:
+        name: apply-bootstrap
+        tasks_from: manage_repo_secrets.yml
+

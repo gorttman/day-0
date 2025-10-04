@@ -23,6 +23,16 @@ bootstrap_repos:
     rev: main
     path: apps
 
+config_repos:
+  - name: dhcpd-config
+    rev: main
+    path: apps
+    repo: https://github.com/gorttman/dhcpd-conf.git
+  - name: dns-config
+    rev: main
+    path: apps
+    repo: https://github.com/gorttman/dns-conf.git
+
 helper_scripts:
   - seal_secret.sh
 # Removed in favor of kubernetes cron job

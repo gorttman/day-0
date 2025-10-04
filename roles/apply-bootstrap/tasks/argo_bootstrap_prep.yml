@@ -1,0 +1,18 @@
+---
+- name: Ensure argocd namespace exists
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: argocd
+
+- name: Install ArgoCD core manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: argocd
+    state: present
+    src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+

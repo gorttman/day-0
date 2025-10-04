@@ -1,7 +1,15 @@
 ---
  - name: Template out  the bootstrap app 
    include_tasks: template_bootstrap.yml
-    
+
+ - name: Prepare Argo for bootstrap
+   ansible.builtin.include_tasks:
+     file: argo_bootstrap_prep.yml
+
+ - name: Apply secrets
+   ansible.builtin.include_tasks:
+    file: manage_repo_secrets.yml
+
  - name: Apply ArgoCD bootstrap
    include_tasks: apply_bootstrap.yml
 

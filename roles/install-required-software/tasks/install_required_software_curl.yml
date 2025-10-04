@@ -9,3 +9,9 @@
     url: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.27.1/kubeseal-0.27.1-linux-arm64.tar.gz
     dest: /tmp/kubeseal.tar.gz
     mode: '0644'
+
+#- name: Install argo cli 
+#  get_url:
+#    url: https://github.com/argoproj/argo-cd/releases/latest/download/argocd-li
+#  dest: /tmp/argocd-li
+#  mode: '0644'
