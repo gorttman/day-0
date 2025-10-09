@@ -1,0 +1,27 @@
+# FILE: roles/prep-rootfs/tasks/ensure_directories.yml
+---
+# Ensure all staging directories for rootfs creation exist.
+
+- name: Ensure base staging directory exists
+  ansible.builtin.file:
+    path: "{{ staging_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure rootfs staging directory exists
+  ansible.builtin.file:
+    path: "{{ staging_rootfs }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure necessary subdirectories inside rootfs staging path
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ staging_rootfs }}/etc"
+    - "{{ staging_rootfs }}/boot"
+    - "{{ staging_rootfs }}/var"
+    - "{{ staging_rootfs }}/usr"
+    - "{{ staging_rootfs }}/tmp"

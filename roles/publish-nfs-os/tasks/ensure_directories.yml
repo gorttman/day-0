@@ -1,0 +1,15 @@
+# FILE: roles/publish-nfs-os/tasks/ensure_directories.yml
+---
+# Ensure all directories required for publishing rootfs to NFS exist.
+
+- name: Ensure NFS base export directory exists
+  ansible.builtin.file:
+    path: "{{ NFS_EXPORT_PATH }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure base export path for rootfs exists
+  ansible.builtin.file:
+    path: "{{ NFS_EXPORT_PATH }}/base"
+    state: directory
+    mode: "0755"

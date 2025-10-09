@@ -1,0 +1,3 @@
+# FILE: roles/prep-rootfs/handlers/main.yml
+---
+# (Reserved for future use — currently no handler actions required)
